@@ -43,15 +43,22 @@ function Menu({ perfil }) {
             <div className="dropdown dropdown-end">
                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                     <div className="w-10 rounded-full">
-                        <img alt="perfil avatar" src={perfil?.foto_url || `https://ui-avatars.com/api/?name=${perfil?.nombre}+${perfil?.apellido_paterno}+${perfil?.apellido_materno}`} />
+                        <img alt="perfil avatar" src={perfil?.foto_url 
+                            ? `http://localhost:8080${perfil.foto_url}` 
+                            : `https://ui-avatars.com/api/?name=${perfil?.nombre}+${perfil?.apellido_paterno}+${perfil?.apellido_materno}`
+                        } />
                     </div>
                 </div>
                 <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                     <li>
-                        <button onClick={abrirPerfil}>Ver perfil</button>
+                        <button onClick={abrirPerfil}>
+                            Ver perfil
+                        </button>
                     </li>
                     <li>
-                        <a>Mis reservas</a>
+                        <Link to={'/my-reservations'}>
+                            Mis reservas
+                        </Link>
                     </li>
                     <li>
                         <a>Mis prestamos</a>
@@ -62,7 +69,7 @@ function Menu({ perfil }) {
                 </ul>
             </div>
 
-            <Profile />
+            <Profile perfil={perfil} />
         </div>
     )
 }
