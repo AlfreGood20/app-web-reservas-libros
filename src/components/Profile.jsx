@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Profile() {
+function Profile({ perfil }) {
 
     return (
         <dialog id="perfil" className="modal">
@@ -52,19 +52,19 @@ function Profile() {
                         <legend className="fieldset-legend">Datos personales</legend>
 
                         <label className="label">Nombre</label>
-                        <input type="text" className="input w-auto" placeholder="Obligatorio" />
+                        <input type="text" className="input w-auto" value={perfil?.nombre} placeholder="Obligatorio" />
 
                         
                         <label className="label">Apellido paterno</label>
-                        <input type="text" className="input w-auto" placeholder="Obligatorio" />
+                        <input type="text" className="input w-auto" value={perfil?.apellido_paterno} placeholder="Obligatorio" />
                 
 
                         <label className="label">Apellido materno</label>
-                        <input type="text" className="input w-auto" placeholder="Obligatorio" />
+                        <input type="text" className="input w-auto" value={perfil?.apellido_materno} placeholder="Obligatorio" />
 
 
                         <label className='label'>Correo</label>
-                        <input type="text" className="input w-auto" value={"jose@test.com"}  placeholder="Obligatorio" disabled={true} />
+                        <input type="text" className="input w-auto" value={perfil?.correo}  placeholder="Obligatorio" disabled={true} />
                         <p className='label'>Por tema de seguridad no podras actualizar tu correo.</p>
 
 
@@ -75,10 +75,10 @@ function Profile() {
                         <legend className="fieldset-legend">Telefonos</legend>
 
                         <label className="label">Personal</label>
-                        <input type="text" className="input w-auto" placeholder="9932460918" />
+                        <input type="text" className="input w-auto" value={perfil?.telefonos[0].numero} placeholder="9932460918" />
 
                         <label className='label'>Referencia</label>
-                        <input type="text" className="input w-auto" placeholder="9931738140"/>
+                        <input type="text" className="input w-auto" value={perfil?.telefonos[1].numero} placeholder="9931738140"/>
 
                     </fieldset>
 

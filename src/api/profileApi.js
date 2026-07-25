@@ -13,3 +13,16 @@ export async function getPerfil(tokenAccess) {
 
     return response;
 }
+
+export async function getReservas(tokenAccess) {
+
+    const response = await fetch(
+        `${API_URL}/reservas/usuario`,{
+            headers: {
+                "Authorization":`Bearer ${tokenAccess}`
+            }
+        }
+    );
+
+    return response;
+}
