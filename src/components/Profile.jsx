@@ -75,10 +75,10 @@ function Profile({ perfil }) {
                         <legend className="fieldset-legend">Telefonos</legend>
 
                         <label className="label">Personal</label>
-                        <input type="text" className="input w-auto" value={perfil?.telefonos[0].numero} placeholder="9932460918" />
+                        <input type="text" className="input w-auto" value={perfil?.telefonos[0].numero} placeholder="Obligatorio" />
 
                         <label className='label'>Referencia</label>
-                        <input type="text" className="input w-auto" value={perfil?.telefonos[1].numero} placeholder="9931738140"/>
+                        <input type="text" className="input w-auto" value={perfil?.telefonos[1].numero} placeholder="Obligatorio"/>
 
                     </fieldset>
 
