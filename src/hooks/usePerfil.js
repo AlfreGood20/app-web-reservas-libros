@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getPerfil } from '../api/profileApi';
+import { getPerfil, postUpdateImagenPerfil } from '../api/profileApi';
 import { useAuth } from '../context/AuthContext';
 
 export function usePerfil() {
@@ -26,4 +26,29 @@ export function usePerfil() {
     }, [accessToken, isAuthenticated])
 
     return { perfil, cargando };
+}
+
+export function usePerfilUpdateImagen() {
+    const { accessToken } = useAuth();
+    const [cargando, setCargando] = useState(false);
+
+    const subirImagen = async (archivo) => {
+        setCargando(true);
+
+        const formData = new FormData();
+        formData.append("imagen", archivo);
+
+        const respuesta = await postUpdateImagenPerfil(accessToken, formData);
+        const body = await respuesta.json();
+
+        if(!respuesta.ok){
+            throw new Error(body.menssaje);
+        }
+
+        setCargando(false);
+
+        return respuesta;
+    };
+
+    return { subirImagen, cargando };
 }

@@ -26,3 +26,18 @@ export async function getReservas(tokenAccess) {
 
     return response;
 }
+
+export async function postUpdateImagenPerfil(tokenAccess, data) {
+    
+    const response = await fetch(
+        `${API_URL}/usuarios/perfil/foto`,{
+            method: "POST",
+            headers: {
+                "Authorization":`Bearer ${tokenAccess}`
+            },
+            body: data
+        }
+    );
+
+    return response;
+}

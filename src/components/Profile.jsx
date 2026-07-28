@@ -1,6 +1,35 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
+import { usePerfilUpdateImagen } from '../hooks/usePerfil';
+import { toast } from 'react-toastify';
 
 function Profile({ perfil }) {
+
+    const refInput = useRef(null);
+    const {cargando, subirImagen} = usePerfilUpdateImagen();
+
+    async function seleccionarImagen(e) {
+        const archivo = e.target.files[0];
+
+        if (!archivo) return;
+
+        try {
+
+            const respuesta = await toast.promise(
+                subirImagen(archivo),
+                {
+                    error: {
+                        render({ data }) {
+                            return data.message;
+                        }
+                    },
+                    pending: "Subiendo foto de perfil...",
+                }
+            );
+            
+            window.location.reload();
+        } catch (error) {}
+
+    }
 
     return (
         <dialog id="perfil" className="modal">
@@ -10,7 +39,7 @@ function Profile({ perfil }) {
                 <form method="dialog">
                     <button className="btn btn-sm btn-circle btn-ghost text-md absolute right-2 top-2">✕</button>
                 </form>
-
+ 
                 <div className='flex flex-col items-center'>
 
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -27,17 +56,26 @@ function Profile({ perfil }) {
                     <div className='indicator'>
 
                         <div className='indicator-item indicator-bottom indicator-center'>
-                            <button className="btn btn-soft btn-info rounded-full" title='editar foto perfil'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                            </svg>
+
+                            <button className="btn btn-soft btn-info rounded-full" title='editar foto perfil' onClick={() => refInput.current.click()}>
+                            
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                                </svg>
+
                             </button>
+
+                            
+                            <input type="file" accept="image/*" hidden ref={refInput} onChange={seleccionarImagen}/>
+
                         </div>
 
                         <div className="avatar">
                             <div className="w-35 h-auto rounded-full">
-                            <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" />
+                                <img alt="perfil avatar" src={perfil?.foto_url 
+                                    ? `http://localhost:8080${perfil.foto_url}` 
+                                    : `https://ui-avatars.com/api/?name=${perfil?.nombre}+${perfil?.apellido_paterno}+${perfil?.apellido_materno}`} />
                             </div>
                         </div>
 
