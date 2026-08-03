@@ -5,8 +5,8 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MyReservations from './pages/MyReservations'
 import Layout from './components/Layout'
+import MyActivities from './pages/MyActivities'
 
 function App() {
   
@@ -19,7 +19,7 @@ function App() {
         <Routes> 
           <Route element={<Layout />}>
             <Route path='/' element={<Home />}/>
-            <Route path='/my-reservations' element={<MyReservations />} />
+            <Route path='/mis-actividades' element={<MyActivities />} />
         </Route>
 
           <Route path='/register' element={<Register />} />
