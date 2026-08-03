@@ -35,15 +35,15 @@ function ViewDetails({ detalle }) {
     };
 
     return (
-       <dialog id="ver_detalle" class="modal">
+       <dialog id="ver_detalle" className="modal">
 
-            <div class="modal-box">
+            <div className="modal-box">
 
                 <h1 className='card-title'>Detalles</h1>
                 <div className='flex flex-row justify-between'>
                     <p className='text-sm label'>ID: {detalle?.id}</p>
 
-                    <div class={`badge badge-soft ${colores[detalle?.estado]}`}>
+                    <div className={`badge badge-soft ${colores[detalle?.estado]}`}>
                         {icons[detalle?.estado]} {detalle?.estado}
                     </div>
                 </div>
@@ -57,7 +57,7 @@ function ViewDetails({ detalle }) {
                 <div className='divider'></div>
 
                 <div className='flex flex-col p-2 justify-center items-center'>
-                    <img className='w-45' src={`http://localhost:8080${detalle?.libro.portada_url}`}/>
+                    <img className='w-45 rounded shadow' src={`http://localhost:8080${detalle?.libro.portada_url}`} loading='lazy'/>
                     <h2 className='underline'>{detalle?.libro.titulo}</h2>
                     <p>ISBN: {detalle?.libro.isbn}</p>
                 </div>
@@ -72,7 +72,7 @@ function ViewDetails({ detalle }) {
                 {(detalle?.estado === "PENDIENTE" || detalle?.estado === "DISPONIBLE") &&
 
                     <div className='flex justify-center'>
-                        <button className='btn btn-soft btn-error'>
+                        <button className='btn btn-soft btn-error' title='Cancelar reserva'>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
@@ -84,7 +84,7 @@ function ViewDetails({ detalle }) {
             </div>
 
 
-            <form method="dialog" class="modal-backdrop">
+            <form method="dialog" className="modal-backdrop">
                 <button>close</button>
             </form>
         </dialog>

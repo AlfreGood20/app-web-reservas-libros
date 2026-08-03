@@ -16,7 +16,7 @@ function Navbar() {
             <div className="navbar-start">
                 <div className='flex flex-row items-center justify-center carousel carousel-horizontal'>
                     <img src={Logo} className='w-40 h-auto'/>
-                    <h1 className="text-lg flex flex-row font-extrabold">ME</h1>
+                    <h1 className="text-2xl flex flex-row font-extrabold text-shadow-lg">ME</h1>
                 </div>
             </div>
 
