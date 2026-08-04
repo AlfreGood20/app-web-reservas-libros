@@ -1,7 +1,8 @@
 import React from 'react'
 import { data } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-function ViewDetails({ detalle }) {
+function ViewDetails({ detalle, onCancelar }) {
 
     const icons = {
         ENTREGADA: 
@@ -33,6 +34,27 @@ function ViewDetails({ detalle }) {
         CANCELADA: 'badge-error',
         EXPIRADA: 'badge-info'
     };
+
+    const handleCancelar = async (id) => {
+
+        document.getElementById("ver_detalle").close();
+
+        try{
+
+            await toast.promise(
+                onCancelar(id),{
+                    success: "Reserva cancelada exitosamente",
+                    error: {
+                        render({ data }){
+                            return data.message;
+                        }
+                    },
+                    pending: "Cancelando reserva"
+                }
+            );
+
+        }catch(error){}
+    }
 
     return (
        <dialog id="ver_detalle" className="modal">
@@ -72,7 +94,7 @@ function ViewDetails({ detalle }) {
                 {(detalle?.estado === "PENDIENTE" || detalle?.estado === "DISPONIBLE") &&
 
                     <div className='flex justify-center'>
-                        <button className='btn btn-soft btn-error' title='Cancelar reserva'>
+                        <button className='btn btn-soft btn-error' title='Cancelar reserva' onClick={() => handleCancelar(detalle.id)}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
@@ -82,7 +104,6 @@ function ViewDetails({ detalle }) {
                 }
 
             </div>
-
 
             <form method="dialog" className="modal-backdrop">
                 <button>close</button>
