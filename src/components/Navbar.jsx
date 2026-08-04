@@ -46,8 +46,8 @@ function Navbar() {
                 ) : cargandoPerfil ?  (
 
                     <div className='flex flex-row gap-5 items-center'>
-                        <div class="skeleton h-15 w-90"></div>
-                        <div class="skeleton h-12 w-12 shrink-0 rounded-full"></div>
+                        <div className="skeleton h-15 w-90"></div>
+                        <div className="skeleton h-12 w-12 shrink-0 rounded-full"></div>
                     </div>
 
                 ): (<Menu perfil={perfil}/>)
