@@ -4,15 +4,17 @@ import ViewDetails from '../components/ViewDetails';
 import CardActivity from '../components/CardActivity';
 import ProgressData from '../components/ProgressData';
 import useLoan from '../hooks/useLoan';
+import { useForm } from '../hooks/useForm';
 
-function MyReservations() {
+function MyActivities() {
 
     const fecha = new Date();
     const meses = [
         "enero","febrero","marzo","abril","mayo", "junio","julio","agosto","semtiembre", "octubre","noviembre","diciembre"
     ];
 
-    const {cargando: cargandoReservas, reservas} = useReservation();
+    const data = useForm({ estado: ''})
+    const {cargando: cargandoReservas, reservas, cancelarReserva} = useReservation(data.form.estado);
     const {cargando: cargandoPrestamos, prestamos} = useLoan();
     
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
@@ -82,14 +84,16 @@ function MyReservations() {
                 {/* TAB DE DONDE APARECERAN TODA LA INFORMACION DE RESERVAS */}
                 <div className="tab-content border-base-300 bg-base-100 p-10">
 
-                    <h2 className='text-lg font-extrabold'>Tus reservas</h2>
+                    <h1 className='text-lg font-extrabold'>Tus reservas</h1>
 
                     <div className='flex justify-center'>
-                        <div class="filter">
-                            <input className="btn btn-outline w-15 filter-reset" type="radio" name="estados" aria-label="Elegir"/>
-                            <input className="btn btn-soft btn-warning" type="radio" name="estados" aria-label="Pendientes"/>
-                            <input className="btn btn-soft btn-accent" type="radio" name="estados" aria-label="Recogidos"/>
-                            <input className="btn btn-soft btn-error" type="radio" name="estados" aria-label="Cancelados"/>
+                        <div className="filter">
+                            <input onChange={data.handleChange} className="btn btn-outline w-15 filter-reset" value="" type="radio" name="estado" aria-label="Elegir"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-warning" value="PENDIENTE" type="radio" name="estado" aria-label="Pendientes"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-accent" value="DISPONIBLE" type="radio" name="estado" aria-label="Disponibles"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-success" value="ENTREGADA" type="radio" name="estado" aria-label="Entregadas"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-error" value="CANCELADA" type="radio" name="estado" aria-label="Canceladas"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-info" value="EXPIRADA" type="radio" name="estado" aria-label="Expirada"/>
                         </div>
                     </div>
 
@@ -112,7 +116,7 @@ function MyReservations() {
 
                             : (reservas.map(reserva => 
 
-                                <CardActivity estado = {reserva.estado}>
+                                <CardActivity estado = {reserva.estado} key={reserva.id}>
                                     <h1 className='card-title text-sm font-bold'>Libro: {reserva.libro.titulo}</h1>
                                     <label className='label'>ID: {reserva.id}</label>
 
@@ -144,12 +148,28 @@ function MyReservations() {
                     </div>
                     
                 </div>
+                {/* AQUI TERMINA */}
 
-                <input type="radio" name="my_tabs_2" class="tab" aria-label="Tus prestamos" />
+                <input type="radio" name="my_tabs_2" className="tab" aria-label="Tus prestamos" />
 
                 {/* TAB DE PRESTAMOS DONDE APARECERAN LAS RESERVAS RECOGIDAS */}
-                <div class="tab-content border-base-300 bg-base-100 p-10">
+                <div className="tab-content border-base-300 bg-base-100 p-10">
                     <h2 className='text-lg font-extrabold'>Tus Prestamos</h2>
+
+                    {/* ACTIVO,
+                    DEVUELTO,
+                    VENCIDO,
+                    RENOVADO */}
+
+                    <div className='flex justify-center'>
+                        <div className="filter">
+                            <input className="btn btn-outline w-15 filter-reset" value="" type="radio" name="estado" aria-label="Elegir"/>
+                            <input className="btn btn-soft btn-info" value="ACTIVO" type="radio" name="estado" aria-label="Activos"/>
+                            <input className="btn btn-soft btn-success" value="DEVUELTO" type="radio" name="estado" aria-label="Devueltos"/>
+                            <input className="btn btn-soft btn-error" value="VENCIDO" type="radio" name="estado" aria-label="Vencidos"/>
+                            <input className="btn btn-soft btn-warning" value="RENOVADO" type="radio" name="estado" aria-label="Renovados"/>
+                        </div>
+                    </div>
 
                     <div className='divider'></div>
                     <div className='flex flex-col gap-3'>
@@ -167,7 +187,7 @@ function MyReservations() {
                                     </div>
                                 )
                             :(prestamos.map(prestamo => 
-                                <CardActivity estado={prestamo.estado}>
+                                <CardActivity estado={prestamo.estado} key={prestamo.id}>
                                     <h1 className='card-title text-sm font-bold'>Ejemplar: {prestamo.ejemplar.codigo}</h1>
                                     <label className='label'>ID: {prestamo.id}</label>
 
@@ -196,8 +216,6 @@ function MyReservations() {
                                                 MensajeDiasRestantes(prestamo.fecha_limite)
                                         }
                                     </div>
-
-                                    
                                 </CardActivity>
                             ))
                         }
@@ -205,18 +223,20 @@ function MyReservations() {
                     </div>
 
                 </div>
+                {/* AQUI TERMINA */}
 
-                <input type="radio" name="my_tabs_2" class="tab" aria-label="Tus multas" />
+                <input type="radio" name="my_tabs_2" className="tab" aria-label="Tus multas" />
 
                 {/* TAB DE MULTAS DONDE NO SE HAYA DEVUELTO LOS LIBROS */}
-                <div class="tab-content border-base-300 bg-base-100 p-10">
+                <div className="tab-content border-base-300 bg-base-100 p-10">
                     <h2 className='text-lg font-extrabold'>Tus multas</h2>
                 </div>
+                {/* AQUI TERMINA */}
             </div>
 
-            <ViewDetails detalle={reservaSeleccionada}/>
+            <ViewDetails detalle={reservaSeleccionada} onCancelar={cancelarReserva}/>
         </div>
     )
 }
 
-export default MyReservations
+export default MyActivities;
