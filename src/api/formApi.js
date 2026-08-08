@@ -2,7 +2,7 @@ import { API_URL } from "./api";
 
 export async function getMunicipios() {
 
-    const response = await fetch(`${API_URL}/municipios`);
+    const response = await fetch(`${API_URL}/municipios/public`);
 
     if (!response.ok) {
         throw new Error(response);
