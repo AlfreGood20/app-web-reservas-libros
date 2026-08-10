@@ -10,3 +10,13 @@ export async function getLibros(params) {
 
     return response;
 }
+
+export async function getLibroPorId(id) {
+    const response = await fetch(`${API_URL}/libros/public/${id}`);
+
+    if (!response.ok) {
+        throw new Error(response);
+    }
+
+    return response;
+}
