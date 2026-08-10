@@ -11,7 +11,7 @@ function Navbar() {
     const {perfil, cargando: cargandoPerfil} = usePerfil();
 
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar fixed top-0 left-0 z-50 bg-base-100/50 backdrop-blur-md shadow-sm rounded-b-2xl">
 
             <div className="navbar-start">
                 <div className='flex flex-row items-center justify-center carousel carousel-horizontal'>
@@ -50,8 +50,9 @@ function Navbar() {
                         <div className="skeleton h-12 w-12 shrink-0 rounded-full"></div>
                     </div>
 
-                ): (<Menu perfil={perfil}/>)
-                }
+                ) : perfil ? (
+                    <Menu perfil={perfil}/>
+                ) : null}
             </div>
 
         </div>
