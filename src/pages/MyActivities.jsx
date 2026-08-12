@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useReservation } from '../hooks/useReservation';
 import ViewDetails from '../components/ViewDetails';
 import CardActivity from '../components/CardActivity';
@@ -8,13 +8,17 @@ import { useForm } from '../hooks/useForm';
 
 function MyActivities() {
 
+    useEffect(() => {
+        document.title = "ME | Tus actividades"
+      },[]);
+
     const fecha = new Date();
     const meses = [
         "enero","febrero","marzo","abril","mayo", "junio","julio","agosto","semtiembre", "octubre","noviembre","diciembre"
     ];
 
-    const data = useForm({ estado: ''})
-    const {cargando: cargandoReservas, reservas, cancelarReserva} = useReservation(data.form.estado);
+    const data = useForm({ estado: '', page: 0})
+    const {cargando: cargandoReservas, reservas, cancelarReserva} = useReservation(data.form);
     const {cargando: cargandoPrestamos, prestamos} = useLoan();
     
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
@@ -84,7 +88,7 @@ function MyActivities() {
                 {/* TAB DE DONDE APARECERAN TODA LA INFORMACION DE RESERVAS */}
                 <div className="tab-content border-base-300 bg-base-100 p-10">
 
-                    <h1 className='text-lg font-extrabold'>Tus reservas</h1>
+                    <h1 className='text-lg font-extrabold' id='tus_reservas'>Tus reservas</h1>
 
                     <div className='flex justify-center'>
                         <div className="filter">
@@ -107,14 +111,14 @@ function MyActivities() {
                                 <div className="skeleton h-50 w-full"></div>
                             </>
                             
-                            : reservas === null || reservas.length === 0 ?
+                            : reservas?.contenido === null || reservas?.contenido.length === 0 ?
                                 (
                                     <div className='flex justify-center items-end'>
                                         <label className='label text-xl'>Sin historial.</label>
                                     </div>
                                 )
 
-                            : (reservas.map(reserva => 
+                            : (reservas?.contenido.map(reserva => 
 
                                 <CardActivity estado = {reserva.estado} key={reserva.id}>
                                     <h1 className='card-title text-sm font-bold'>Libro: {reserva.libro.titulo}</h1>
@@ -144,6 +148,26 @@ function MyActivities() {
                                 </CardActivity>)
                             )
                         }
+
+                        <div className="join flex flex-flow items-center justify-center">
+                            <button className="join-item btn" disabled={reservas?.es_primera} 
+                                onClick={() =>  {
+                                    data.setForm({...data.form, page: data.form.page - 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }}
+                            >
+                                «
+                            </button>
+                            <span className="join-item w-auto btn">Página {(reservas?.pagina_actual + 1)}</span>
+                            <button className="join-item btn" disabled={reservas?.es_ultima} 
+                                onClick={() => {
+                                    data.setForm({...data.form, page: data.form.page + 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }} 
+                            >
+                                »
+                            </button>
+                        </div>
                         
                     </div>
                     
