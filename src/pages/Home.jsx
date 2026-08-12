@@ -17,7 +17,7 @@ function Home() {
         { nombre: 'Domingo', letra: 'D' },
         { nombre: 'Lunes', letra: 'L' },
         { nombre: 'Martes', letra: 'M' },
-        { nombre: 'Miércoles', letra: 'X' },
+        { nombre: 'Miércoles', letra: 'M' },
         { nombre: 'Jueves', letra: 'J' },
         { nombre: 'Viernes', letra: 'V' },
         { nombre: 'Sábado', letra: 'S' }
