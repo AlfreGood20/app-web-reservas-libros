@@ -12,5 +12,5 @@ export function useForm(inicialValues) {
         setForm(prev => ({...prev, [name]:value}));
     }
 
-    return {form, handleChange }
+    return {form, handleChange , setForm}
 }
