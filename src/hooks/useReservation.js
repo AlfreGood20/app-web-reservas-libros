@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { toast } from 'react-toastify';
-import { getReservas, patchReserva } from '../api/reservationApi';
+import { getReservas, patchReserva, postReserva } from '../api/reservationApi';
 
-export function useReservation(estado) {
+export function useReservation({ page = 0, estado = undefined, fetchReservas = true } = {}) {
 
     const {accessToken} = useAuth();
     const [reservas, setReservas] = useState(null);
@@ -12,19 +12,29 @@ export function useReservation(estado) {
 
     useEffect(() => {
 
-        if(accessToken === null){
+        if (!fetchReservas || accessToken === null) {
             return;
         }
 
         setCargando(true);
 
-        getReservas(accessToken, estado)
+        const filtros = {
+            estado,
+            page
+        }
+
+        const params = new URLSearchParams(
+            Object.fromEntries(
+                Object.entries(filtros).filter(([_, valor]) => valor !== undefined && valor !== '')
+        ));
+
+        getReservas(accessToken, params)
             .then(response => response.json())
             .then(datas => setReservas(datas))
-            .catch(() => toast.error('Ocurrio un error con el servidor.'))
+            .catch(() => toast.error('OCURRIÓ UN ERROR EN EL SERVIDOR.'))
             .finally(() => setCargando(false));
 
-    }, [accessToken, estado])
+    }, [accessToken, page, estado]);
 
 
     const cancelarReserva = async (reservaId) => {
@@ -38,10 +48,28 @@ export function useReservation(estado) {
             throw new Error(body.menssaje);
         }
 
-        setReservas(prev => prev.map(r => r.id === reservaId ? body : r));
+        setReservas(prev => ({
+            ...prev,
+            contenido: prev.contenido.map(r =>
+                r.id === reservaId ? body : r
+            )
+        }));
 
         setCargando(false);
     }
 
-    return { cargando, reservas, cancelarReserva}
+    const pedirNuevaReserva = async (data) => {
+        setCargando(true);
+
+        const response = await postReserva(accessToken, data);
+        const body = await response.json();
+
+        if(!response.ok){
+            setCargando(false);
+            throw new Error(body.menssaje);
+        }
+        setCargando(false);
+    }
+
+    return { cargando, reservas, cancelarReserva, pedirNuevaReserva}
 }
