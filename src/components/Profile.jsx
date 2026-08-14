@@ -1,11 +1,38 @@
 import React, { useRef, useState } from 'react'
-import { usePerfilUpdateImagen } from '../hooks/usePerfil';
+import { usePerfilUpdateDatos, usePerfilUpdateImagen } from '../hooks/usePerfil';
 import { toast } from 'react-toastify';
+import { useForm } from '../hooks/useForm';
 
 function Profile({ perfil }) {
 
     const refInput = useRef(null);
-    const {cargando, subirImagen} = usePerfilUpdateImagen();
+
+    const datosPersonales = useForm({
+        nombre: perfil?.nombre,
+        apellido_paterno: perfil?.apellido_paterno,
+        apellido_materno: perfil?.apellido_materno
+    });
+
+    const telefonoPersonal = useForm({ 
+        numero: perfil?.telefonos[0]?.numero
+    });
+    const telefonoReferencia = useForm({ 
+        numero: perfil?.telefonos[1]?.numero
+    });
+
+    const telefonos = [
+        {
+            ...telefonoPersonal.form,
+            telefono_id: perfil?.telefonos[0]?.id
+        },
+        {
+            ...telefonoReferencia.form,
+            telefono_id: perfil?.telefonos[1]?.id
+        }
+    ]
+
+    const { subirImagen } = usePerfilUpdateImagen();
+    const { cargando, actualizarDatos } = usePerfilUpdateDatos();
 
     async function seleccionarImagen(e) {
         const archivo = e.target.files[0];
@@ -14,7 +41,7 @@ function Profile({ perfil }) {
 
         try {
 
-            const respuesta = await toast.promise(
+            await toast.promise(
                 subirImagen(archivo),
                 {
                     error: {
@@ -28,7 +55,32 @@ function Profile({ perfil }) {
             
             window.location.reload();
         } catch (error) {}
+    }
 
+    async function handleActualizarDatos(e) {
+
+        e.preventDefault();
+        
+        try {
+            
+            const datosActulizados = await toast.promise(
+                actualizarDatos({
+                    ...datosPersonales.form,
+                    telefonos
+                }),{
+                    success: 'Datos actualizados correctamente.',
+                    error: {
+                        render({ data }) {
+                            return data.message;
+                        }
+                    },
+                    pending: 'Actualizando datos...'
+                }
+            );
+
+            perfil.nombre = datosActulizados.nombre;
+
+        } catch (error) {}
     }
 
     return (
@@ -83,28 +135,24 @@ function Profile({ perfil }) {
 
                 </div>
 
-                <form className='mt-6 flex flex-col justify-center'>
+                <form className='mt-6 flex flex-col justify-center' onSubmit={handleActualizarDatos}>
 
                     <fieldset className="fieldset bg-base-100 border-base-300 rounded-box w-auto border p-5">
 
                         <legend className="fieldset-legend">Datos personales</legend>
 
                         <label className="label">Nombre</label>
-                        <input type="text" className="input w-auto" value={perfil?.nombre} placeholder="Obligatorio" />
+                        <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.nombre} placeholder="Obligatorio" name='nombre' required/>
 
-                        
                         <label className="label">Apellido paterno</label>
-                        <input type="text" className="input w-auto" value={perfil?.apellido_paterno} placeholder="Obligatorio" />
+                        <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.apellido_paterno} placeholder="Obligatorio" name='apellidoPaterno' required required/>
                 
-
                         <label className="label">Apellido materno</label>
-                        <input type="text" className="input w-auto" value={perfil?.apellido_materno} placeholder="Obligatorio" />
-
+                        <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.apellido_materno} placeholder="Obligatorio"  required/>
 
                         <label className='label'>Correo</label>
                         <input type="text" className="input w-auto" value={perfil?.correo}  placeholder="Obligatorio" disabled={true} />
                         <p className='label'>Por tema de seguridad no podras actualizar tu correo.</p>
-
 
                     </fieldset>
 
@@ -113,14 +161,15 @@ function Profile({ perfil }) {
                         <legend className="fieldset-legend">Telefonos</legend>
 
                         <label className="label">Personal</label>
-                        <input type="text" className="input w-auto" value={perfil?.telefonos[0].numero} placeholder="Obligatorio" />
+                        <input onChange={telefonoPersonal.handleChange} type="text" className="input w-auto validator" value={telefonoPersonal.form.numero} placeholder="Obligatorio" name='numero' required/>
 
                         <label className='label'>Referencia</label>
-                        <input type="text" className="input w-auto" value={perfil?.telefonos[1].numero} placeholder="Obligatorio"/>
+                        <input onChange={telefonoReferencia.handleChange} type="text" className="input w-auto validator" value={telefonoReferencia.form.numero} placeholder="Obligatorio" name='numero' required/>
 
                     </fieldset>
 
-                    <button className='btn btn-outline btn-success mt-5'>
+                    {/* BOTON DE GUARDAR CAMBIOS */}
+                    <button className='btn btn-outline btn-success mt-5' type='submit' disabled={cargando}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
