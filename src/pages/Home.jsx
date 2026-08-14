@@ -44,16 +44,16 @@ function Home() {
   const Skeleton = () => {
     return (
       <div className='flex flex-col gap-3'>
-          <div class="skeleton h-6 w-60"></div>
+          <div className="skeleton h-6 w-60"></div>
           <div className='flex flex-row gap-5'>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
-            <div class="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
+            <div className="skeleton h-50 w-40"></div>
           </div>
         </div>
     )
