@@ -32,12 +32,15 @@ export async function postLogin(data) {
     return response;
 }
 
-export async function logout() {
+export async function postLogout(tokenAccess) {
 
     const response = await fetch(
         `${API_URL}/auth/logout`,{
             method: "POST",
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                'Authorization':`Bearer ${tokenAccess}`
+            }
         }
     );
 
