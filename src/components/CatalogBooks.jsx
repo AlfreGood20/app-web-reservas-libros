@@ -9,7 +9,7 @@ function CatalogBooks({ children, titulo }) {
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
 
             <h1 className="text-lg font-bold"> {titulo}</h1>
 
@@ -17,7 +17,9 @@ function CatalogBooks({ children, titulo }) {
 
                 <button onClick={() => scroll(-1)} className="btn btn-circle btn-xl">❮</button>
 
-                <div ref={scrollRef} className="flex flex-row overflow-x-auto gap-6 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div ref={scrollRef} 
+                    className="flex flex-row overflow-x-auto overflow-y-hidden md:gap-3 md:h-75 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
                     {children}
                 </div>
 
