@@ -1,14 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { usePerfil } from '../hooks/usePerfil';
 import Logo from '../assets/logo_app_biblioteca_me_libro.png'
 import  Menu  from '../components/Menu'
+import { useForm } from '../hooks/useForm';
 
 function Navbar() {
 
-    const {isAuthenticated, accessToken, cargando} = useAuth();
+    const {isAuthenticated, cargando} = useAuth();
     const {perfil, cargando: cargandoPerfil} = usePerfil();
+    const [activo, setActivo] = useState(false);
+    const navegar = useNavigate();
+
+    const data = useForm({ titulo:'' });
+
+    useEffect(() => {
+
+        if(!activo) return;
+
+         const titulo = data.form.titulo.trim();
+
+        if (!titulo) {
+            navegar('/libros')
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            const params = new URLSearchParams();
+            params.set("titulo", titulo);
+            navegar(`/libros?${params.toString()}`);
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    },[data.form])
 
     return (
         <div className="navbar fixed top-0 left-0 z-50 bg-base-100/50 backdrop-blur-md shadow-sm rounded-b-2xl">
@@ -20,8 +45,17 @@ function Navbar() {
                 </div>
             </div>
 
+            {/* INPUT DE BUSQUEDA */}
             <div className="navbar-center">
-                <input type="search" placeholder="Buscar libro" className="input input-bordered w-50 md:w-100" />
+
+                <label className="input md:w-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+
+                    <input onFocus={() => setActivo(true)} onChange={data.handleChange} type="search" className="grow " placeholder="Buscar libro" name='titulo'/>
+                </label>
+
             </div>
 
            <div className="navbar-end">
