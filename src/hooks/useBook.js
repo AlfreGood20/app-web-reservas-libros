@@ -8,11 +8,11 @@ export function useBook(
         page = 0, 
         size = 20, 
         sort = 'id,asc',
-        titulo,
-        isbn,
-        categoriaId,
-        editorialId,
-        idiomaId
+        titulo = undefined,
+        isbn = undefined,
+        categoriaId = undefined,
+        editorialId = undefined,
+        idiomaId = undefined
     } = {}) {
 
     const [datos, setDatos] = useState(null);
