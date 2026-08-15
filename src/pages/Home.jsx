@@ -27,19 +27,19 @@ function Home() {
 
   /* asc|desc */
   /* BUSCAR PARA LIBROS MAS RECIENTES */
-  const {datos:recienAgregados, cargando:cargandoRecienAgregados} = useBook({ size: 20 });
+  const recienAgregados = useBook({ size: 20 });
 
   /*  BUSCAR LOS LIBROS MAS RECIENTES POR AÑO */
-  const {datos:recientes, cargando:cargandoRecientes} = useBook({ size: 20, sort: 'anio,desc' });
+  const recientes = useBook({ size: 20, sort: 'anio,desc' });
 
   /* BUSCAR LIBROS CLASICOS POR AÑO */
-  const {datos: clasicos, cargando:cargandoClasicos} = useBook({ size: 20, sort: 'anio,asc'});
+  const clasicos = useBook({ size: 20, sort: 'anio,asc'});
   
   /* BUSCAR LIBROS CORTOS */
-  const {datos: paraLeer, cargando:cargandoParaLeer} = useBook({ size: 20, sort: 'numeroPaginas,asc' });
+  const cortos = useBook({ size: 20, sort: 'numeroPaginas,asc' });
 
   /* BUSCAR LIBROS QUE COMIENZE CON LA LETRA DEL DIA */
-  const { datos: diaSemana, cargando:cargandoDiaSemana } = useBook({ size: 20, titulo: diaActual.letra});
+  const diaSemana = useBook({ size: 20, titulo: diaActual.letra});
 
   const Skeleton = () => {
     return (
@@ -62,45 +62,45 @@ function Home() {
   return (
     <>
     
-        <div className='flex flex-col p-5 gap-8'>
+        <div className='flex flex-col md:p-10 gap-8'>
 
-          {cargandoRecienAgregados? 
+          {recienAgregados.cargando? 
               <Skeleton />
             :
               <CatalogBooks titulo = 'Recién agregados'>
-                {recienAgregados?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
+                {recienAgregados.datos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
               </CatalogBooks>
           }
 
-          {cargandoRecientes ? 
+          {recientes.cargando ? 
             <Skeleton />
           :
             <CatalogBooks titulo= 'Publicados este año / Recientes'>
-              {recientes?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
+              {recientes.datos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
             </CatalogBooks>
           }
 
-          {cargandoClasicos ? 
+          {clasicos.cargando ? 
             <Skeleton />
           :
              <CatalogBooks titulo = 'Clasicos / Antiguos'>
-                {clasicos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
+                {clasicos.datos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
               </CatalogBooks> 
           }
 
-          {cargandoParaLeer ?
+          {cortos.cargando ?
             <Skeleton />
           :
             <CatalogBooks titulo = 'Para terminar un día'>
-              {paraLeer?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
+              {cortos.datos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
             </CatalogBooks> 
           }
 
-          {cargandoDiaSemana ?
+          {diaSemana.cargando?
             <Skeleton />
           :
             <CatalogBooks titulo = {`Con ${diaActual.letra} de ${diaActual.nombre}`}>
-              {diaSemana?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
+              {diaSemana.datos?.contenido?.map(libro => <Book libro={libro} key={libro.id}/>)}
             </CatalogBooks> 
           }
 
