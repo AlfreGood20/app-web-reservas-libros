@@ -145,7 +145,7 @@ function Profile({ perfil }) {
                         <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.nombre} placeholder="Obligatorio" name='nombre' required/>
 
                         <label className="label">Apellido paterno</label>
-                        <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.apellido_paterno} placeholder="Obligatorio" name='apellidoPaterno' required required/>
+                        <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.apellido_paterno} placeholder="Obligatorio" name='apellidoPaterno' required/>
                 
                         <label className="label">Apellido materno</label>
                         <input onChange={datosPersonales.handleChange} type="text" className="input w-auto validator" value={datosPersonales.form.apellido_materno} placeholder="Obligatorio"  required/>
