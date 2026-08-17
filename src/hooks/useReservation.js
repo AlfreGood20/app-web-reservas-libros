@@ -6,7 +6,7 @@ import { getReservas, patchReserva, postReserva } from '../api/reservationApi';
 export function useReservation({ page = 0, estado = undefined, fetchReservas = true } = {}) {
 
     const {accessToken} = useAuth();
-    const [reservas, setReservas] = useState(null);
+    const [datos, setDatos] = useState(null);
     const [cargando, setCargando] = useState(false);
 
 
@@ -30,7 +30,7 @@ export function useReservation({ page = 0, estado = undefined, fetchReservas = t
 
         getReservas(accessToken, params)
             .then(response => response.json())
-            .then(datas => setReservas(datas))
+            .then(datas => setDatos(datas))
             .catch(() => toast.error('OCURRIÓ UN ERROR EN EL SERVIDOR.'))
             .finally(() => setCargando(false));
 
@@ -48,7 +48,7 @@ export function useReservation({ page = 0, estado = undefined, fetchReservas = t
             throw new Error(body.menssaje);
         }
 
-        setReservas(prev => ({
+        setDatos(prev => ({
             ...prev,
             contenido: prev.contenido.map(r =>
                 r.id === reservaId ? body : r
@@ -71,5 +71,5 @@ export function useReservation({ page = 0, estado = undefined, fetchReservas = t
         setCargando(false);
     }
 
-    return { cargando, reservas, cancelarReserva, pedirNuevaReserva}
+    return { cargando, datos, cancelarReserva, pedirNuevaReserva}
 }
