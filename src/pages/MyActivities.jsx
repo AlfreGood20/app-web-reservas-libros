@@ -5,6 +5,8 @@ import CardActivity from '../components/CardActivity';
 import ProgressData from '../components/ProgressData';
 import useLoan from '../hooks/useLoan';
 import { useForm } from '../hooks/useForm';
+import { useFine } from '../hooks/useFine';
+import { Link } from 'react-router-dom';
 
 function MyActivities() {
 
@@ -17,9 +19,11 @@ function MyActivities() {
         "enero","febrero","marzo","abril","mayo", "junio","julio","agosto","semtiembre", "octubre","noviembre","diciembre"
     ];
 
-    const data = useForm({ estado: '', page: 0})
-    const {cargando: cargandoReservas, reservas, cancelarReserva} = useReservation(data.form);
-    const {cargando: cargandoPrestamos, prestamos} = useLoan();
+    const data = useForm({ estado: '', page: 0});
+
+    const reservas = useReservation(data.form);
+    const prestamos = useLoan(data.form);
+    const multas = useFine(data.form);
     
     const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
 
@@ -73,6 +77,23 @@ function MyActivities() {
                 </span>;
     }
 
+    const SinHistorial = () => {
+        return <div className='flex justify-center items-end md:p-15'>
+                    <label className='label text-xl'>Sin historial.</label>
+                </div>
+    }
+
+    const Skeleton = () => {
+        return 
+            <>
+                <div className="skeleton h-50 w-full"></div>
+                <div className="skeleton h-50 w-full"></div>
+            </>
+    }
+
+    const handleReiniciarData = () => {
+         data.setForm({page: 0, estado: ''});
+    }
 
     return (
         <div className='flex flex-col p-5'>
@@ -83,7 +104,7 @@ function MyActivities() {
             </p>
 
             <div className="tabs tabs-border mt-5">
-                <input type="radio" name="my_tabs_2" className="tab" aria-label="Tus reservas" defaultChecked/>
+                <input onChange={handleReiniciarData}  type="radio" name="my_tabs_2" className="tab" aria-label="Tus reservas" defaultChecked/>
 
                 {/* TAB DE DONDE APARECERAN TODA LA INFORMACION DE RESERVAS */}
                 <div className="tab-content border-base-300 bg-base-100 p-10">
@@ -105,20 +126,13 @@ function MyActivities() {
 
                     <div className='flex flex-col gap-3'>
 
-                        {cargandoReservas?
-                            <>
-                                <div className="skeleton h-50 w-full"></div>
-                                <div className="skeleton h-50 w-full"></div>
-                            </>
+                        {reservas.cargando?
+                            <Skeleton />
                             
-                            : reservas?.contenido === null || reservas?.contenido.length === 0 ?
-                                (
-                                    <div className='flex justify-center items-end'>
-                                        <label className='label text-xl'>Sin historial.</label>
-                                    </div>
-                                )
+                            : reservas.datos?.contenido === null || reservas.datos?.contenido?.length === 0 ?
+                                <SinHistorial />
 
-                            : (reservas?.contenido.map(reserva => 
+                            : (reservas.datos?.contenido?.map(reserva => 
 
                                 <CardActivity estado = {reserva.estado} key={reserva.id}>
                                     <h1 className='card-title text-sm font-bold'>Libro: {reserva.libro.titulo}</h1>
@@ -150,7 +164,7 @@ function MyActivities() {
                         }
 
                         <div className="join flex flex-flow items-center justify-center">
-                            <button className="join-item btn" disabled={reservas?.es_primera} 
+                            <button className="join-item btn" disabled={reservas.datos?.es_primera} 
                                 onClick={() =>  {
                                     data.setForm({...data.form, page: data.form.page - 1});
                                     document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -158,8 +172,8 @@ function MyActivities() {
                             >
                                 «
                             </button>
-                            <span className="join-item w-auto btn">Página {(reservas?.pagina_actual + 1)}</span>
-                            <button className="join-item btn" disabled={reservas?.es_ultima} 
+                            <span className="join-item w-auto btn btn-disabled">Página {(reservas.datos?.pagina_actual + 1)}</span>
+                            <button className="join-item btn" disabled={reservas.datos?.es_ultima} 
                                 onClick={() => {
                                     data.setForm({...data.form, page: data.form.page + 1});
                                     document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -172,11 +186,9 @@ function MyActivities() {
                     </div>
                     
                 </div>
-                {/* AQUI TERMINA */}
-
-                <input type="radio" name="my_tabs_2" className="tab" aria-label="Tus prestamos" />
-
+                
                 {/* TAB DE PRESTAMOS DONDE APARECERAN LAS RESERVAS RECOGIDAS */}
+                <input onChange={handleReiniciarData} type="radio" name="my_tabs_2" className="tab" aria-label="Tus prestamos" />
                 <div className="tab-content border-base-300 bg-base-100 p-10">
                     <h2 className='text-lg font-extrabold'>Tus Prestamos</h2>
 
@@ -187,30 +199,24 @@ function MyActivities() {
 
                     <div className='flex justify-center'>
                         <div className="filter">
-                            <input className="btn btn-outline w-15 filter-reset" value="" type="radio" name="estado" aria-label="Elegir"/>
-                            <input className="btn btn-soft btn-info" value="ACTIVO" type="radio" name="estado" aria-label="Activos"/>
-                            <input className="btn btn-soft btn-success" value="DEVUELTO" type="radio" name="estado" aria-label="Devueltos"/>
-                            <input className="btn btn-soft btn-error" value="VENCIDO" type="radio" name="estado" aria-label="Vencidos"/>
-                            <input className="btn btn-soft btn-warning" value="RENOVADO" type="radio" name="estado" aria-label="Renovados"/>
+                            <input onChange={data.handleChange} className="btn btn-outline w-15 filter-reset" value="" type="radio" name="estado" aria-label="Elegir"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-info" value="ACTIVO" type="radio" name="estado" aria-label="Activos"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-success" value="DEVUELTO" type="radio" name="estado" aria-label="Devueltos"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-error" value="VENCIDO" type="radio" name="estado" aria-label="Vencidos"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-warning" value="RENOVADO" type="radio" name="estado" aria-label="Renovados"/>
                         </div>
                     </div>
 
                     <div className='divider'></div>
                     <div className='flex flex-col gap-3'>
 
-                        {cargandoPrestamos? 
-                            <>
-                                <div className="skeleton h-50 w-full"></div>
-                                <div className="skeleton h-50 w-full"></div>
-                            </>
+                        {prestamos.cargando?
+                            <Skeleton />
 
-                            : prestamos === null || prestamos.length === 0? 
-                                (
-                                    <div className='flex justify-center items-end'>
-                                        <label className='label text-xl'>Sin historial.</label>
-                                    </div>
-                                )
-                            :(prestamos.map(prestamo => 
+                            : prestamos.datos?.contenido === null || prestamos.datos?.contenido?.length === 0? 
+                                <SinHistorial />
+
+                            :(prestamos.datos?.contenido?.map(prestamo => 
                                 <CardActivity estado={prestamo.estado} key={prestamo.id}>
                                     <h1 className='card-title text-sm font-bold'>Ejemplar: {prestamo.ejemplar.codigo}</h1>
                                     <label className='label'>ID: {prestamo.id}</label>
@@ -225,10 +231,10 @@ function MyActivities() {
 
 
                                     <label className='font-bold'>
-                                        Autorizado por: {prestamo.usuario_admin.nombre} {prestamo.usuario_admin.apellido_paterno} {prestamo.usuario_admin.apellido_materno}
+                                        Autorizado por: {prestamo.autorizo.nombre} {prestamo.autorizo.apellido_paterno} {prestamo.autorizo.apellido_materno}
                                     </label>
 
-                                    <label className='font-bold'>Correo de contacto: {prestamo.usuario_admin.correo}</label>
+                                    <label className='font-bold'>Correo de contacto: {prestamo.autorizo.correo}</label>
 
                                     <div className='flex flex-row justify-between'>
                                         <label className='label underline'>Fecha limite: {prestamo.fecha_limite}</label>
@@ -244,21 +250,116 @@ function MyActivities() {
                             ))
                         }
 
+                        <div className="join flex flex-flow items-center justify-center">
+                            <button className="join-item btn" disabled={prestamos.datos?.es_primera} 
+                                onClick={() =>  {
+                                    data.setForm({...data.form, page: data.form.page - 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }}
+                            >
+                                «
+                            </button>
+                            <span className="join-item w-auto btn btn-disabled">Página {(prestamos.datos?.pagina_actual + 1)}</span>
+                            <button className="join-item btn" disabled={prestamos.datos?.es_ultima} 
+                                onClick={() => {
+                                    data.setForm({...data.form, page: data.form.page + 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }}
+                            >
+                                »
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+                
+
+                {/* TAB DE MULTAS DONDE NO SE HAYA DEVUELTO LOS LIBROS */}
+                <input onChange={handleReiniciarData} type="radio" name="my_tabs_2" className="tab" aria-label="Tus multas" />
+                <div className="tab-content border-base-300 bg-base-100 p-10">
+                    <h2 className='text-lg font-extrabold'>Tus multas</h2>
+
+                    {/* ESTADOS:  PENDIENTE, PAGADO, CONDONADA*/}
+                    <div className='flex justify-center'>
+
+                        <div className="filter">
+                            <input onChange={data.handleChange} className="btn btn-outline w-15 filter-reset" value="" type="radio" name="estado" aria-label="Elegir"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-warning" value="PENDIENTE" type="radio" name="estado" aria-label="Pendientes"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-success" value="PAGADA" type="radio" name="estado" aria-label="Pagados"/>
+                            <input onChange={data.handleChange} className="btn btn-soft btn-info" value="CONDONADA" type="radio" name="estado" aria-label="Condonadas"/>
+                        </div>
+
+                    </div>
+
+                    <div className='divider'></div>
+
+                    <div className='flex flex-col gap-3'>
+                        
+                        {multas.cargando?
+                            <Skeleton />
+
+                            :
+                                multas.datos?.contenido === null || multas.datos?.contenido?.length === 0 ? 
+                                    <SinHistorial />
+
+                            : 
+                                multas.datos?.contenido?.map(multa => 
+                                    <CardActivity key={multa.id} estado={multa.estado}>
+
+                                        <div className='flex flex-row justify-between'>
+                                            <label className='label'>ID: {multa.id}</label>
+
+                                            <div class="badge badge-error">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                                                </svg>
+
+                                                Importe ${multa.importe}
+                                            </div>
+                                        </div>
+
+                                        <p className='text-sm'>Fecha registro: {multa.fecha_registro}</p>
+                                        <p className='font-extrabold'>Dias de retraso: {multa.dias_retraso}</p>
+
+                                        <label className='text-sm label'>El pago es urgente, ya que por cada dia que pase sera mayor su costo de multa.</label>
+                                        
+                                        <Link className='btn btn-link' to={'/centro-ayuda'}>
+                                            Más información.
+                                        </Link>
+
+                                    </CardActivity>
+                                )
+                        }
+
+                        <div className="join flex flex-flow items-center justify-center">
+                            <button className="join-item btn" disabled={multas.datos?.es_primera} 
+                                onClick={() =>  {
+                                    data.setForm({...data.form, page: data.form.page - 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }}
+                            >
+                                «
+                            </button>
+                            <span className="join-item w-auto btn btn-disabled">Página {(multas.datos?.pagina_actual + 1)}</span>
+                            <button className="join-item btn" disabled={multas.datos?.es_ultima} 
+                                onClick={() => {
+                                    data.setForm({...data.form, page: data.form.page + 1});
+                                    document.getElementById('tus_reservas').scrollIntoView({behavior: 'smooth', block: 'start'});
+                                }}
+                            >
+                                »
+                            </button>
+                        </div>
+
                     </div>
 
                 </div>
                 {/* AQUI TERMINA */}
-
-                <input type="radio" name="my_tabs_2" className="tab" aria-label="Tus multas" />
-
-                {/* TAB DE MULTAS DONDE NO SE HAYA DEVUELTO LOS LIBROS */}
-                <div className="tab-content border-base-300 bg-base-100 p-10">
-                    <h2 className='text-lg font-extrabold'>Tus multas</h2>
-                </div>
-                {/* AQUI TERMINA */}
+                
             </div>
 
-            <ViewDetails detalle={reservaSeleccionada} onCancelar={cancelarReserva}/>
+            <ViewDetails detalle={reservaSeleccionada} onCancelar={reservas.cancelarReserva}/>
         </div>
     )
 }

@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { getPrestamos } from '../api/profileApi';
 import { toast } from 'react-toastify';
 
-export default function useLoan() {
+export default function useLoan({ page=0, size=10, sort='fechaLimite,desc', estado=undefined } = {}) {
   
     const [cargando, setCargando] = useState(false);
-    const [prestamos, setPrestamos] = useState(null);
+    const [datos, setDatos] = useState(null);
 
     const {accessToken} = useAuth();
 
@@ -16,15 +16,24 @@ export default function useLoan() {
             return;
         }
 
+        const filtros = {
+            page, size, sort, estado
+        }
+
+        const params = new URLSearchParams(
+            Object.fromEntries(
+                Object.entries(filtros).filter(([_, valor]) => valor !== undefined && valor !== '')
+        ));
+
         setCargando(true);
 
-        getPrestamos(accessToken)
+        getPrestamos(accessToken, params)
             .then(response => response.json())
-            .then(datas => setPrestamos(datas))
-            .catch(() => toast.error('Ocurrio un error con el servidor.'))
+            .then(datas => setDatos(datas))
+            .catch(() => toast.error('OCURRIÓ UN ERROR EN EL SERVIDOR.'))
             .finally(() => setCargando(false));
 
-    }, [accessToken]);
+    }, [accessToken, page, size, sort, estado]);
 
-    return {cargando, prestamos}
+    return {cargando, datos}
 }

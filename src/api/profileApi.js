@@ -14,10 +14,10 @@ export async function getPerfil(tokenAccess) {
     return response;
 }
 
-export async function getPrestamos(tokenAccess) {
+export async function getPrestamos(tokenAccess, params) {
     
     const response = await fetch(
-        `${API_URL}/prestamos/usuario`,{
+        `${API_URL}/prestamos/usuario?${params.toString()}`,{
             headers: {
                 "Authorization":`Bearer ${tokenAccess}`
             }
