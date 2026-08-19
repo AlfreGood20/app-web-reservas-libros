@@ -84,11 +84,12 @@ function MyActivities() {
     }
 
     const Skeleton = () => {
-        return 
+        return (
             <>
                 <div className="skeleton h-50 w-full"></div>
                 <div className="skeleton h-50 w-full"></div>
             </>
+        )
     }
 
     const handleReiniciarData = () => {
@@ -356,7 +357,7 @@ function MyActivities() {
 
                 </div>
                 {/* AQUI TERMINA */}
-                
+
             </div>
 
             <ViewDetails detalle={reservaSeleccionada} onCancelar={reservas.cancelarReserva}/>

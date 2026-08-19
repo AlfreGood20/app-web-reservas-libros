@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import MyActivities from './pages/MyActivities';
 import DetailsBook from './pages/DetailsBook';
 import SearchPanel from './pages/SearchPanel';
+import HelpCenter from './pages/HelpCenter';
 
 function App() {
   
@@ -17,15 +18,17 @@ function App() {
       <BrowserRouter>     
         <ToastContainer />
 
-        {/* ESTOS COMPONENTES VAN A TENER NAVBAR */}
+        {/* PAGINAS VAN A TENER NAVBAR */}
         <Routes> 
           <Route element={<Layout />}>
             <Route path='/' element={<Home />}/>
             <Route path='/mis-actividades' element={<MyActivities />} />
             <Route path='/libros/:libro/:id' element={<DetailsBook />} />
             <Route path='/libros' element={<SearchPanel />} />
+            <Route path='/centro-de-ayuda' element={<HelpCenter />}/>
         </Route>
 
+        {/*  PAGINAS QUE NO TENDRAN NAVBAR */}
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='*' element={<Navigate to={'/'} replace />}/>
