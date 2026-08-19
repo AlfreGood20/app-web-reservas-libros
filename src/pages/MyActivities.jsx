@@ -325,7 +325,7 @@ function MyActivities() {
 
                                         <label className='text-sm label'>El pago es urgente, ya que por cada dia que pase sera mayor su costo de multa.</label>
                                         
-                                        <Link className='btn btn-link' to={'/centro-ayuda'}>
+                                        <Link className='btn btn-link' to={'/centro-de-ayuda#multas'}>
                                             Más información.
                                         </Link>
 
